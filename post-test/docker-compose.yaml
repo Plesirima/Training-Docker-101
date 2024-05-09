@@ -1,0 +1,116 @@
+version: '3'
+services:
+
+#db_01
+  db_01:
+    image: postgres:16.0
+    build:
+      context: ./database1
+      dockerfile: Dockerfile
+    container_name: database1
+    environment:
+      DB1_USER: database1
+      DB1_PASSWORD: database1
+      DB1_DB: database1
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "database1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+#db_02
+  db_02:
+    image: postgres:16.0
+    build:
+      context: database2
+      dockerfile: Dockerfile
+    container_name: database2
+    environment:
+      DB2_USER: database2
+      DB2_PASSWORD: database2
+      DB2_DB: database2
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "database2"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s 
+
+#backend1
+  backend1:
+    image: backend1:1.0
+    build: 
+      context: ./backend1
+      dockerfile: Dockerfile
+    container_name: backend1
+    environment:
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+      DB1_HOST: db_01
+      DB1_NAME: database1
+      DB1_USER: database1
+      DB1_PASSWORD: database1
+      DB2_HOST: db_01
+      DB2_NAME: database1
+      DB2_USER: database1
+      DB2_PASSWORD: database1
+    ports:
+      - 3001:3001
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    depends_on:
+      db_01:
+        condition: service_healthy
+
+#backend2
+  backend2:
+    image: backend2:1.0
+    build: 
+      context: ./backend2
+      dockerfile: Dockerfile
+    container_name: backend2
+    ports:
+      - 3002:3002
+    environment:
+      DB1_HOST: db_02
+      DB1_NAME: database2
+      DB1_USER: database2
+      DB1_PASSWORD: database2
+      DB2_HOST: db_02
+      DB2_NAME: database2
+      DB2_USER: database2
+      DB2_PASSWORD: database2
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    depends_on:
+      db_02:
+        condition: service_healthy
+
+  backend_test:
+    image: backend-test:1.0
+    build:
+      context: ./backend-testing
+    volumes:
+      - ./backend-testing/report:/etc/newman/newman
+
+#Mountebank
+  mountebank:
+    image: mock-api:latest
+    container_name: mock-api
+    build: 
+      context: mountebank
+      dockerfile: Dockerfile
+    volumes:
+      - ./mountebank/imposters:/imposters
+    ports:
+      - 2525:2525
+      - 8090:8090
+    command: --configfile /imposters/imposters.ejs --allowInjection
