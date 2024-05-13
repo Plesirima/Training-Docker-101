@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="New Collection" tests="1" time="0.041">
+  <testsuite name="Get all user" id="29aa3a2c-2b66-4123-b031-7e17fd5100b0" timestamp="2024-05-13T10:10:46.797Z" tests="2" failures="0" errors="0" time="0.041">
+    <testcase name="Status code is 200" time="0.041" classname="NewCollection"/>
+    <testcase name="Schema is valid" time="0.041" classname="NewCollection"/>
+  </testsuite>
+</testsuites>

@@ -4,5 +4,5 @@ COPY package*.json .
 RUN npm i  
 # RUN export NODE_TLS_REJECT_UNAUTHORIZED=0
 COPY . .
-EXPOSE 3001
+EXPOSE 3000
 CMD [ "npm", "start" ]

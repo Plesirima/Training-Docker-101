@@ -45,7 +45,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://backend1/users",
+					"raw": "backend1/users",
 					"protocol": "http",
 					"host": [
 						"backend1"

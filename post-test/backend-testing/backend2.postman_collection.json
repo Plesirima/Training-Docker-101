@@ -143,7 +143,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://backend2/foods",
+					"raw": "backend2/foods",
 					"protocol": "http",
 					"host": [
 						"backend2"

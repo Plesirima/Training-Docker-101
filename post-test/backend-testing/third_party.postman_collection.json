@@ -75,7 +75,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://backend1/thirdParty/users",
+					"raw": "backend1:3000/thirdParty/users",
 					"protocol": "http",
 					"host": [
 						"backend1"
